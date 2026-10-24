@@ -2,9 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { Calendar, Lock, Mail, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { errMsg } from "@/lib/api";
-import { Alert, Button, Card, Input, Select } from "@/components/ui";
+import AuthShell from "@/components/AuthShell";
+import { Alert, Button, Input, Select } from "@/components/ui";
 
 const GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -35,33 +37,38 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <Card title="Patient Registration">
-        <form onSubmit={submit} className="space-y-3">
-          <Alert>{error}</Alert>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="First name" name="firstName" required />
-            <Input label="Last name" name="lastName" required />
-          </div>
-          <Input label="Email" name="email" type="email" required />
-          <Input label="Password (min 8)" name="password" type="password" minLength={8} required />
-          <Input label="Date of birth" name="dateOfBirth" type="date" required />
+    <AuthShell
+      title="Create your account"
+      subtitle="Set up your emergency profile in a minute."
+      footer={
+        <>
+          Already account ache?{" "}
+          <Link href="/login" className="font-semibold text-brand-600 hover:underline">
+            Login
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4">
+        <Alert>{error}</Alert>
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="First name" name="firstName" icon={<User />} required />
+          <Input label="Last name" name="lastName" required />
+        </div>
+        <Input label="Email" name="email" type="email" icon={<Mail />} placeholder="you@example.com" required />
+        <Input label="Password (min 8)" name="password" type="password" icon={<Lock />} minLength={8} required />
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="Date of birth" name="dateOfBirth" type="date" icon={<Calendar />} required />
           <Select label="Blood group" name="bloodGroup" defaultValue="O+">
             {GROUPS.map((g) => (
               <option key={g}>{g}</option>
             ))}
           </Select>
-          <Button type="submit" disabled={busy} className="w-full">
-            {busy ? "Please wait..." : "Create account"}
-          </Button>
-        </form>
-        <p className="mt-3 text-sm text-gray-600">
-          Already account ache?{" "}
-          <Link href="/login" className="text-blue-600">
-            Login
-          </Link>
-        </p>
-      </Card>
-    </div>
+        </div>
+        <Button type="submit" loading={busy} className="w-full py-3">
+          {busy ? "Please wait..." : "Create account"}
+        </Button>
+      </form>
+    </AuthShell>
   );
 }

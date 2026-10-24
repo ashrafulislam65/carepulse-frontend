@@ -97,7 +97,16 @@ function Sos() {
       setErr(errMsg(e));
     }
   };
-
+   useEffect(() => {
+    if (!alertId || (status !== "TRIGGERED" && status !== "DISPATCHED")) return;
+    const t = setInterval(async () => {
+      try {
+        const a = await api<{ status: string }>(`/alerts/${alertId}`);
+        setStatus(a.status);
+      } catch {}
+    }, 5000);
+    return () => clearInterval(t);
+  }, [alertId, status]);
   const active = alertId && (status === "TRIGGERED" || status === "DISPATCHED");
 
   return (

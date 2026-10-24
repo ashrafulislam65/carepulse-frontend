@@ -47,6 +47,7 @@ function Responder() {
   // socket connect + realtime events
   useEffect(() => {
     load();
+    const poll = setInterval(load, 5000);
     const socket = io(SOCKET_URL, { auth: { token: getToken() } });
     socketRef.current = socket;
     socket.on("connect", () => allIds.current.forEach((id) => socket.emit("alert:join", id)));
@@ -57,6 +58,7 @@ function Responder() {
     });
     return () => {
       socket.disconnect();
+      clearInterval(poll);
     };
   }, [load]);
 

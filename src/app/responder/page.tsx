@@ -45,8 +45,8 @@ function Responder() {
   }, []);
 
   // socket connect + realtime events
-  useEffect(() => {
-    load();
+    useEffect(() => {
+    const first = setTimeout(load, 0);
     const poll = setInterval(load, 5000);
     const socket = io(SOCKET_URL, { auth: { token: getToken() } });
     socketRef.current = socket;
@@ -58,6 +58,7 @@ function Responder() {
     });
     return () => {
       socket.disconnect();
+      clearTimeout(first);
       clearInterval(poll);
     };
   }, [load]);

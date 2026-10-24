@@ -2,9 +2,17 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { Lock, Mail } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { errMsg } from "@/lib/api";
-import { Alert, Button, Card, Input } from "@/components/ui";
+import AuthShell from "@/components/AuthShell";
+import { Alert, Button, Input } from "@/components/ui";
+
+const demo = [
+  { label: "Doctor", email: "doctor@carepulse.test" },
+  { label: "Responder", email: "responder@carepulse.test" },
+  { label: "Admin", email: "admin@carepulse.test" },
+];
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -27,32 +35,61 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mx-auto max-w-sm">
-      <Card title="Login">
-        <form onSubmit={submit} className="space-y-3">
-          <Alert>{error}</Alert>
-          <Input label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input
-            label="Password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" disabled={busy} className="w-full">
-            {busy ? "Please wait..." : "Login"}
-          </Button>
-        </form>
-        <p className="mt-3 text-sm text-gray-600">
+    <AuthShell
+      title="Welcome back"
+      subtitle="Login to your CarePulse account."
+      footer={
+        <>
           Account nai?{" "}
-          <Link href="/register" className="text-blue-600">
+          <Link href="/register" className="font-semibold text-brand-600 hover:underline">
             Register
           </Link>
-        </p>
-        <p className="mt-2 text-xs text-gray-400">
-          Test: doctor@ / responder@ / admin@carepulse.test, password: Password@123
-        </p>
-      </Card>
-    </div>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4">
+        <Alert>{error}</Alert>
+        <Input
+          label="Email"
+          type="email"
+          required
+          icon={<Mail />}
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          label="Password"
+          type="password"
+          required
+          icon={<Lock />}
+          placeholder="Your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" loading={busy} className="w-full py-3">
+          {busy ? "Please wait..." : "Login"}
+        </Button>
+      </form>
+
+      <div className="mt-6 border-t pt-4">
+        <p className="mb-2 text-xs font-medium text-slate-400">Demo accounts (password: Password@123)</p>
+        <div className="flex flex-wrap gap-2">
+          {demo.map((d) => (
+            <button
+              key={d.label}
+              type="button"
+              onClick={() => {
+                setEmail(d.email);
+                setPassword("Password@123");
+              }}
+              className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:bg-brand-50 hover:text-brand-700"
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </AuthShell>
   );
 }
